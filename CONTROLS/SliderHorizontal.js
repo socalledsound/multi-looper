@@ -22,7 +22,6 @@ class SliderHorizontal{
         })   
         fill(col)
         noStroke()
-        console.log(this.w)
         rect(this.x + this.w/4, this.y, this.w/20, this.h) 
     }
 }

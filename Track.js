@@ -7,8 +7,10 @@ class Track {
             this.h = h
             this.controlsOffsetX = this.x + this.w + 10
             this.controlsOffsetY = this.y + 10
-            this.context = masterContext
-            this.dropZone = new DropZone(this.id, this.context, root, this.h, this)
+            this.waveformOffset = 40
+            this.audioContext = masterContext
+            this.gainNode = this.audioContext.createGain()
+            this.dropZone = new DropZone(this.id, this.audioContext, root, this.h, this)
             this.controls = new Controls(this.controlsOffsetX, this.controlsOffsetY, this.w, this.h)
             this.buffer = null
             this.soundFileData = null
@@ -20,10 +22,24 @@ class Track {
             this.selectingBox = null
             this.hasSelection = false
             this.selection = null
+            this.soundPlaying = false
+            this.soundLooping = false
             
         }
 
 
+        checkClick(mX, mY){
+            if( mX > this.x &&
+                mX < this.w &&
+                mY > this.y &&
+                mY < this.y + this.h &&
+                this.hasAudio 
+                ){
+                    return true
+                }else{
+                    return false
+                }
+        }
 
         drawActiveMarker(){
             stroke([220,0,0])
@@ -45,7 +61,7 @@ class Track {
         }
 
         drawSelection(){
-            fill(255, 255, 255, 90)
+            fill(50, 255, 50, 90)
             rect(this.selection.x, this.selection.y, this.selection.w, this.selection.h)
         }
 
@@ -80,7 +96,7 @@ class Track {
                     }
                     stroke(255);
                     // draw a rectangle that shows the loudness of this step
-                    rect(i, ((1 + min ) * amp) + trackOffset, 1, (Math.max(1, (max-min) * amp )));
+                    rect(i + this.waveformOffset, ((1 + min ) * amp) + trackOffset, 1, (Math.max(1, (max-min) * amp )));
                 }
             }
 
@@ -101,12 +117,69 @@ class Track {
             }
         }
 
+        playSoundOnce = () => {
+            
+            this.source = this.audioContext.createBufferSource()
+            this.source.buffer = this.buffer
+            this.gainNode.connect(this.audioContext.destination)
+            this.source.connect(this.gainNode)
+            this.source.loop = false
+            this.source.playbackRate.value = 1.0
+            //const selectionOffset = Math.abs(this.w/this.selection.y)%this.buffer.duration
+            const selectionOffset = Math.abs(this.selection.y/this.w) * this.buffer.duration
+            // const offset = Math.abs(selectionOffset)%this.buffer.duration;
+            console.log(selectionOffset)
+            this.source.start(0,selectionOffset)
+            const CURRENT_TIME = this.audioContext.currentTime
+            const duration = Math.abs(this.selection.w/this.w) * this.buffer.duration
+            console.log(duration)
+            this.gainNode.gain.linearRampToValueAtTime(1, CURRENT_TIME)
+            this.gainNode.gain.linearRampToValueAtTime(0, CURRENT_TIME + duration)
+            this.soundPlaying = true
+            setTimeout(this.resetSoundPlaying, duration * 1000)
+
+        }
+
+        resetSoundPlaying = () => {
+            this.soundPlaying = false
+            console.log(this.controls)
+            this.controls.playOnceButton.setNotPlaying()
+            this.controls.playLoopButton.enable()
+        }
+
+
+        playSoundLoop = () => {
+            console.log('play sound loop')
+            const selectionOffset = Math.abs(this.selection.y/this.w) * this.buffer.duration
+            const duration = Math.abs(this.selection.w/this.w) * this.buffer.duration
+            this.source = this.audioContext.createBufferSource()
+            this.source.buffer = this.buffer
+            this.gainNode.connect(this.audioContext.destination)
+            this.gainNode.gain.value = 1.0
+            this.source.connect(this.gainNode)
+            this.source.loopStart = selectionOffset
+            this.source.loopEnd = selectionOffset + duration
+            this.source.loop = true
+            this.source.start(0)
+            this.soundLooping = true
+            this.source.playbackRate.value = 1.0      
+            // const CURRENT_TIME = this.audioContext.currentTime
+            
+            
+        }
+
+        stopSoundLoop = () => {
+            this.source.stop()
+            this.soundLooping = false
+        }
+
+
         render(){
             
             if(this.hasAudio){
                 this.drawWaveform()
                 this.controls.render()
-                console.log(this.controls)
+                
                 if(this.clicked){
                     this.drawActiveMarker()
                 }

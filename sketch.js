@@ -47,29 +47,39 @@ function draw(){
 }
 
 
-function checkClick(mX, mY, track){
-    if( mX > track.x &&
-        mX < track.w &&
-        mY > track.y &&
-        mY < track.y + track.h &&
-        track.hasAudio 
-        ){
-            return true
-        }else{
-            return false
-        }
-}
-
-
 function mousePressed(){
     console.log(mouseX)
     tracks.forEach(track => {
-        if(checkClick(mouseX, mouseY, track)){
-            console.log('clicked')
+        if(track.checkClick(mouseX, mouseY)){
+            // console.log('clicked')
             track.setClickMarker(mouseX, mouseY, track)
         }
+        if(track.controls.playOnceButton.checkClick(mouseX, mouseY)){
+            if(!track.soundLooping){
+                if(!track.soundPlaying){
+                    console.log('clicked')
+                    track.controls.playOnceButton.setPlaying()
+                    track.controls.playLoopButton.disable()
+                    track.playSoundOnce()
+                } 
+            } 
+        }
+        if(track.controls.playLoopButton.checkClick(mouseX, mouseY)){
+            if(!track.soundPlaying){
+                if(!track.soundLooping ){
+                    track.playSoundLoop()
+                    track.controls.playLoopButton.setLooping()
+                    track.controls.playOnceButton.disable()
+                } else {
+                    track.stopSoundLoop()
+                    track.controls.playLoopButton.setNotLooping()
+                    track.controls.playOnceButton.enable()
+                }
+            }
 
-    })  
+        }
+    })
+      
 }
 
 

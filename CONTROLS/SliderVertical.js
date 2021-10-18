@@ -19,6 +19,10 @@ class SliderVertical{
         this.marks.forEach(mark => {
             stroke(col)
             line(mark.x1, mark.y1, mark.x2, mark.y2)
-        })    
+        })  
+        
+        fill(col)
+        noStroke()
+        rect(this.x, this.y + this.h/2, this.w, this.h/20) 
     }
 }
