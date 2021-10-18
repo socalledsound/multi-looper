@@ -24,6 +24,10 @@ class Track {
             this.selection = null
             this.soundPlaying = false
             this.soundLooping = false
+            this.gainValue = 1.0
+            this.playbackRate  = 0.5
+            this.playbackHead = null
+            this.playbackHeadScrollvalue = 1
             
         }
 
@@ -52,6 +56,11 @@ class Track {
             text(`track ${this.id + 1}`, 20, (this.id + 1) * this.h - 75 );
             stroke(255)
             // line(0, (this.id + 1) * this.h, this.w, (this.id + 1) * this.h); 
+        }
+
+        drawPlaybackHead(){
+            stroke([220,0,0])
+            line(this.playbackHead.x1, this.playbackHead.y1, this.playbackHead.x2, this.playbackHead.y2 )
         }
 
         drawSelectingBox(){
@@ -124,7 +133,7 @@ class Track {
             this.gainNode.connect(this.audioContext.destination)
             this.source.connect(this.gainNode)
             this.source.loop = false
-            this.source.playbackRate.value = 1.0
+            this.source.playbackRate.value = this.playbackRate
             //const selectionOffset = Math.abs(this.w/this.selection.y)%this.buffer.duration
             const selectionOffset = Math.abs(this.selection.x/this.w) * this.buffer.duration
             // const offset = Math.abs(selectionOffset)%this.buffer.duration;
@@ -133,9 +142,11 @@ class Track {
             const CURRENT_TIME = this.audioContext.currentTime
             const duration = Math.abs(this.selection.w/this.w) * this.buffer.duration
             console.log(duration)
-            this.gainNode.gain.linearRampToValueAtTime(1, CURRENT_TIME)
+            this.gainNode.gain.linearRampToValueAtTime(this.gainValue, CURRENT_TIME)
             this.gainNode.gain.linearRampToValueAtTime(0, CURRENT_TIME + duration)
             this.soundPlaying = true
+            this.playbackHead = {x1: this.selection.x, y1:this.selection.y, x2: this.selection.x, y2: this.selection.h}
+            this.playbackHeadScrollvalue =  (duration/this.selection.w)
             setTimeout(this.resetSoundPlaying, duration * 1000)
 
         }
@@ -155,14 +166,16 @@ class Track {
             this.source = this.audioContext.createBufferSource()
             this.source.buffer = this.buffer
             this.gainNode.connect(this.audioContext.destination)
-            this.gainNode.gain.value = 1.0
+            this.gainNode.gain.value = this.gainValue
             this.source.connect(this.gainNode)
             this.source.loopStart = selectionOffset
             this.source.loopEnd = selectionOffset + duration
             this.source.loop = true
             this.source.start(0, selectionOffset)
             this.soundLooping = true
-            this.source.playbackRate.value = 1.0      
+            this.source.playbackRate.value = this.playbackRate  
+            this.playbackHead = {x1: this.selection.x, y1:this.selection.y, x2: this.selection.x, y2: this.selection.h}
+            this.playbackHeadScrollvalue =  (duration/this.selection.w)   
             // const CURRENT_TIME = this.audioContext.currentTime
             
             
@@ -189,6 +202,10 @@ class Track {
 
                 if(this.hasSelection){
                     this.drawSelection()
+                }
+                if(this.soundPlaying || this.soundLooping){
+                    this.updatePlayBackHead()
+                    this.drawPlaybackHead() 
                 }
             }else{
                 this.drawPlaceholder()
@@ -230,6 +247,21 @@ class Track {
 
         update(mX, mY){
             this.controls.checkMouse(mX, mY)
+        }
+
+        updatePlayBackHead(){
+            if(this.soundPlaying || this.soundLooping){
+                console.log(this.playbackHead.x1, this.selection.x + this.selection.w)
+                if(this.playbackHead.x1 > this.selection.x + this.selection.w){
+                    this.playbackHead.x1 = this.selection.x
+                    this.playbackHead.x2 = this.selection.x
+                }else{
+                    this.playbackHead.x1 += this.playbackHeadScrollvalue
+                    this.playbackHead.x2 += this.playbackHeadScrollvalue
+                    
+                }
+                
+            }
         }
         
         // loadFile = (e) => {
