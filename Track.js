@@ -72,7 +72,7 @@ class Track {
             if(this.soundFileData != null){
                 const step = Math.ceil( this.soundFileData.length / this.w );
                 // get the y position for the track
-                const trackOffset = this.h * this.id;
+                const trackOffset = this.y;
                 // scale the amplitude to the track height
                 const amp = (this.h / 2); // 200
                 
@@ -118,7 +118,7 @@ class Track {
         }
 
         playSoundOnce = () => {
-            
+            console.log(this.buffer)
             this.source = this.audioContext.createBufferSource()
             this.source.buffer = this.buffer
             this.gainNode.connect(this.audioContext.destination)
@@ -126,7 +126,7 @@ class Track {
             this.source.loop = false
             this.source.playbackRate.value = 1.0
             //const selectionOffset = Math.abs(this.w/this.selection.y)%this.buffer.duration
-            const selectionOffset = Math.abs(this.selection.y/this.w) * this.buffer.duration
+            const selectionOffset = Math.abs(this.selection.x/this.w) * this.buffer.duration
             // const offset = Math.abs(selectionOffset)%this.buffer.duration;
             console.log(selectionOffset)
             this.source.start(0,selectionOffset)
@@ -150,7 +150,7 @@ class Track {
 
         playSoundLoop = () => {
             console.log('play sound loop')
-            const selectionOffset = Math.abs(this.selection.y/this.w) * this.buffer.duration
+            const selectionOffset = Math.abs(this.selection.x/this.w) * this.buffer.duration
             const duration = Math.abs(this.selection.w/this.w) * this.buffer.duration
             this.source = this.audioContext.createBufferSource()
             this.source.buffer = this.buffer
@@ -160,7 +160,7 @@ class Track {
             this.source.loopStart = selectionOffset
             this.source.loopEnd = selectionOffset + duration
             this.source.loop = true
-            this.source.start(0)
+            this.source.start(0, selectionOffset)
             this.soundLooping = true
             this.source.playbackRate.value = 1.0      
             // const CURRENT_TIME = this.audioContext.currentTime

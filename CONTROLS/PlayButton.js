@@ -20,7 +20,7 @@ class PlayButton{
     }
 
     checkClick(mX, mY){
-        console.log('checking click')
+        // console.log('checking click')
         if( mX > this.x &&
             mX < this.x + this.w &&
             mY > this.y &&

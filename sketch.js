@@ -76,7 +76,6 @@ function mousePressed(){
                     track.controls.playOnceButton.enable()
                 }
             }
-
         }
     })
       
