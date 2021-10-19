@@ -118,12 +118,15 @@ class Track {
 
 
         onMouseRelease(){
+            console.log('mousereleased')
             this.clicked = false
             this.selecting = false
             this.selectionBox = null
             if(this.selectionLength > 1 || this.selectionLength < -1){
                 this.setSelection()
             }
+            this.controls.pitchControl.onMouseUp()
+            this.controls.volumeControl.onMouseUp()
         }
 
         playSoundOnce = () => {
@@ -251,7 +254,7 @@ class Track {
 
         updatePlayBackHead(){
             if(this.soundPlaying || this.soundLooping){
-                console.log(this.playbackHead.x1, this.selection.x + this.selection.w)
+                //console.log(this.playbackHead.x1, this.selection.x + this.selection.w)
                 if(this.playbackHead.x1 > this.selection.x + this.selection.w){
                     this.playbackHead.x1 = this.selection.x
                     this.playbackHead.x2 = this.selection.x
@@ -262,6 +265,30 @@ class Track {
                 }
                 
             }
+        }
+
+        updateGain(){
+            const yVal = this.controls.volumeControl.slider.knob.y
+            const min = this.controls.volumeControl.slider.y
+            const max = min + this.controls.volumeControl.slider.h
+            const newGain = map(yVal, min, max, 1.0, 0.0) 
+            if(this.gainNode){
+                this.gainNode.gain.value = newGain
+            }
+            this.gainValue = newGain
+            console.log(newGain)  
+        }
+
+        updatePitch(){
+            const xVal = this.controls.pitchControl.slider.knob.x
+            const min = this.controls.pitchControl.slider.x
+            const max = min + this.controls.pitchControl.slider.w
+            const newPitch = map(xVal, min, max, 0.0, 4.0) 
+            if(this.source){
+                this.source.playbackRate.value = newPitch
+            }
+            this.playbackRate = newPitch
+            console.log(newPitch)
         }
         
         // loadFile = (e) => {

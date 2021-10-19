@@ -77,6 +77,24 @@ function mousePressed(){
                 }
             }
         }
+        if(track.controls.pitchControl.slider.knob.checkClick(mouseX, mouseY)){
+            console.log('knob clicked')
+            track.controls.pitchControl.slider.knob.setClicked()
+            // set clicked mouse value
+            // get distance
+            // move knob
+            // update pitch
+        }
+        if(track.controls.volumeControl.slider.knob.checkClick(mouseX, mouseY)){
+            console.log('knob clicked')
+            track.controls.volumeControl.slider.knob.setClicked()
+            
+            // set clicked mouse value
+            // get distance
+            // move knob
+            // update volume
+        }
+
     })
       
 }
@@ -86,6 +104,14 @@ function mouseDragged(){
     tracks.forEach(track => {
         if(track.clicked){
             track.setSelectingBox(mouseX)
+        }
+        if(track.controls.pitchControl.slider.knob.clicked){
+            track.controls.pitchControl.slider.knob.updatePositionX(mouseX)
+            track.updatePitch()
+        }
+        if(track.controls.volumeControl.slider.knob.clicked){
+            track.controls.volumeControl.slider.knob.updatePositionY(mouseY)
+            track.updateGain()
         }
     })
 }

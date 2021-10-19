@@ -4,7 +4,11 @@ class SliderVertical{
         this.y = y
         this.w = w
         this.h = h
-        // this.knob = new Knob()
+        this.defaultColor = [200,200,200,60]
+        this.hoverColor = [200,200,200,120]
+        this.activeColor = [200,200,200,200]
+        this.color = this.defaultColor
+        this.knob = new Knob(this.x, this.y + this.h/2, this.w, this.h/12)
         this.marks = Array.from({length: 30}, (el, i) => {
             return {
                 x1: this.x,
@@ -15,14 +19,22 @@ class SliderVertical{
         })
     }
 
-    render = (col) => {   
+    render = () => {   
         this.marks.forEach(mark => {
-            stroke(col)
+            stroke(this.color)
             line(mark.x1, mark.y1, mark.x2, mark.y2)
         })  
+        this.knob.render()
         
-        fill(col)
-        noStroke()
-        rect(this.x, this.y + this.h/2, this.w, this.h/20) 
+    }
+
+    setHovered(hover){
+        this.hovered = hover
+        if(this.hovered){
+            this.color = this.hoverColor
+        }else{
+            this.color = this.defaultColor
+        }
+        this.knob.setHovered(hover)
     }
 }

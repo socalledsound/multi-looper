@@ -9,6 +9,8 @@ class VolumeControl{
         this.hoverColor = [200,200,200,120]
         this.activeColor = [200,200,200,200]
         this.color = this.defaultColor
+        this.hovered = false
+        
     }
 
     checkHover(mX, mY){
@@ -17,16 +19,28 @@ class VolumeControl{
             mX < this.x + this.w &&
             mY > this.y &&
             mY < this.y + this.h){
-                this.color = this.hoverColor
+                this.hovered = true
             }else{
-                this.color = this.defaultColor  
+                this.hovered = false
             }
+            this.slider.setHovered(this.hovered)
+    }
+
+    
+    onMouseUp(){
+        console.log('mouseUpping')
+        this.slider.knob.resetClicked()
+        
+    }
+
+    onMouseDrag(){
+        
     }
 
 
     render(){
 
-        this.slider.render(this.color)
+        this.slider.render()
        
     }
 }
