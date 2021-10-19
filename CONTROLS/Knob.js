@@ -1,6 +1,9 @@
 class Knob{
-    constructor(x,y,w,h){
+    constructor(x,y,w,h, sliderMin, sliderWidth){
+        this.sliderMin = sliderMin
+        this.sliderMax = sliderMin + sliderWidth
         this.x = x
+        console.log(this.x, this.sliderMin, this.sliderMax)
         this.y = y
         this.w = w
         this.h = h
@@ -73,7 +76,17 @@ class Knob{
     updatePositionX(mX){
         if(this.clickStartX){
             const dX = (mX - this.clickStartX)
-            this.x =  this.clickStartX + dX
+            const newVal = this.clickStartX + dX
+            console.log(newVal)
+            if(newVal > this.sliderMax){
+                this.x = this.sliderMax
+            }else if(newVal < this.sliderMin){
+                this.x = this.sliderMin
+            }else{
+                console.log(this.x)
+                this.x = newVal
+            }
+              
         }else{
             console.error('there was a problem with clickStart')
         }        

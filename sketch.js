@@ -13,7 +13,7 @@ const TRACKHEIGHT = CANVASHEIGHT/numTracks
 const OFFSET_LEFT = 10
 const OFFSET_TOP = 10
 const tracks = Array.from({length: numTracks}, (el, i) => {
-    return new Track(i, OFFSET_LEFT, TRACKHEIGHT * i + OFFSET_TOP, CANVASWIDTH/2 - (2 * OFFSET_LEFT), TRACKHEIGHT - (2 * OFFSET_TOP), context, root)
+    return new Track(i, OFFSET_LEFT, TRACKHEIGHT * i + OFFSET_TOP, CANVASWIDTH/2 - (4 * OFFSET_LEFT), TRACKHEIGHT - (2 * OFFSET_TOP), context, root)
 });
 
 

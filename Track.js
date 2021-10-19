@@ -49,6 +49,12 @@ class Track {
             stroke([220,0,0])
             line(this.clickMarker.x1, this.clickMarker.y1, this.clickMarker.x2, this.clickMarker.y2 )
         }
+
+        drawHint(){
+            textSize(15)
+            noStroke()
+            text('click and drag mouse over waveform to make a selection', this.x + this.w + 100, this.y + this.h/2)
+        }
         
         drawPlaceholder(){  
             fill(255);
@@ -194,7 +200,7 @@ class Track {
             
             if(this.hasAudio){
                 this.drawWaveform()
-                this.controls.render()
+                
                 
                 if(this.clicked){
                     this.drawActiveMarker()
@@ -205,6 +211,9 @@ class Track {
 
                 if(this.hasSelection){
                     this.drawSelection()
+                    this.controls.render()
+                }else{
+                    this.drawHint()
                 }
                 if(this.soundPlaying || this.soundLooping){
                     this.updatePlayBackHead()
