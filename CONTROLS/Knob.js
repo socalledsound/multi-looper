@@ -96,7 +96,17 @@ class Knob{
     updatePositionY(mY){
         if(this.clickStartY){
             const dY = (mY - this.clickStartY)
-            this.y =  this.clickStartY + dY
+            const newVal = this.clickStartY + dY
+            console.log(newVal)
+            if(newVal > this.sliderMax){
+                this.y = this.sliderMax
+            }else if(newVal < this.sliderMin){
+                this.y = this.sliderMin
+            }else{
+                console.log(this.x)
+                this.y = newVal
+            }
+           
         }else{
             console.error('there was a problem with clickStart')
         }

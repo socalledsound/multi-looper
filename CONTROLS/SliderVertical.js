@@ -8,7 +8,7 @@ class SliderVertical{
         this.hoverColor = [200,200,200,120]
         this.activeColor = [200,200,200,200]
         this.color = this.defaultColor
-        this.knob = new Knob(this.x, this.y + this.h/2, this.w, this.h/12)
+        this.knob = new Knob(this.x, this.y + this.h/2, this.w, this.h/12, this.y, this.h)
         this.marks = Array.from({length: 30}, (el, i) => {
             return {
                 x1: this.x,
